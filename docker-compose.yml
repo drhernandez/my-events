@@ -1,0 +1,44 @@
+version: "3"
+networks:
+  myevents:
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management 
+    networks: 
+      - myevents
+  
+  events-db: 
+    image: mongo 
+    networks: 
+      - myevents 
+ 
+  bookings-db: 
+    image: mongo 
+    networks: 
+      - myevents
+
+  events: 
+    image: diegolxi/events-services
+    ports: 
+      - "8181:8181" 
+    networks: 
+      - myevents 
+    environment: 
+      - AMQP_BROKER_URL=amqp://guest:guest@rabbitmq:5672/ 
+      - MONGO_URL=mongodb://events-db/events 
+
+  bookings: 
+    image: diegolxi/bookings-services
+    ports: 
+      - "8282:8181" 
+    networks: 
+      - myevents 
+    environment: 
+      - AMQP_BROKER_URL=amqp://guest:guest@rabbitmq:5672/ 
+      - MONGO_URL=mongodb://bookings-db/bookings
+
+  frontend: 
+    build: /Users/diehernandez/go/src/MyEvents/cloudnativego-frontend
+    ports: 
+      - "80:80"
