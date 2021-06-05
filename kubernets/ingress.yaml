@@ -1,4 +1,4 @@
-apiVersions: extensions/v1beta1 
+apiVersion: networking.k8s.io/v1
 kind: Ingress 
 metadata: 
   name: myevents 
@@ -8,16 +8,26 @@ spec:
     http: 
       paths: 
       - path: /events 
+        pathType: Prefix
         backend: 
-          serviceName: events 
-          servicePort: 80 
+          service:
+            name: events
+            port:
+              number: 80
       - path: /bookings 
+        pathType: Prefix
         backend: 
-          serviceName: bookings 
-          servicePort: 80 
+          service:
+            name: bookings
+            port:
+              number: 80        
   - host: www.myevents.example 
     http: 
       paths: 
-      - backend: 
-          serviceName: frontend 
-          servicePort: 80
+      - path: / 
+        pathType: Prefix
+        backend: 
+          service:
+            name: frontend
+            port:
+              number: 80
